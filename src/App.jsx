@@ -1,76 +1,98 @@
 import React, { useState, useMemo } from 'react';
 import DliciousHeader from './components/DliciousHeader';
-import DliciousCategoryPills from './components/DliciousCategoryPills';
-import DliciousHeroBanner from './components/DliciousHeroBanner';
+import MeatHeroBillboard from './components/MeatHeroBillboard';
 import TrustTicker from './components/TrustTicker';
-import LivestockCatalogGrid from './components/LivestockCatalogGrid';
-import BulkOrderEstimator from './components/BulkOrderEstimator';
-import ConsignmentTracker from './components/ConsignmentTracker';
-import AllanaPartnership from './components/AllanaPartnership';
+import MeatCatalogGrid from './components/MeatCatalogGrid';
+import PartyBulkMeatCalculator from './components/PartyBulkMeatCalculator';
+import StorageGuideSection from './components/StorageGuideSection';
+import AllanaMeatExportSection from './components/AllanaMeatExportSection';
 import DliciousSynergy from './components/DliciousSynergy';
-import BiosecuritySection from './components/BiosecuritySection';
 import DualLocationsSection from './components/DualLocationsSection';
 import Footer from './components/Footer';
-import AllocationBasketDrawer from './components/AllocationBasketDrawer';
-import LotDetailModal from './components/LotDetailModal';
+import MeatCartDrawer from './components/MeatCartDrawer';
+import MeatDetailModal from './components/MeatDetailModal';
 import ProcurementModal from './components/ProcurementModal';
 import DliciousMobileBottomBar from './components/DliciousMobileBottomBar';
-import { LIVESTOCK_LOTS } from './data/livestockLots';
+import { MEAT_PRODUCTS } from './data/meatProducts';
 
 function App() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Basket stores items with their selected weight option and quantity
   const [basket, setBasket] = useState([
-    { ...LIVESTOCK_LOTS[0], heads: 50 },
+    {
+      ...MEAT_PRODUCTS[0],
+      selectedWeight: MEAT_PRODUCTS[0].weightOptions[1], // 1 kg pack default
+      quantity: 1,
+    },
+    {
+      ...MEAT_PRODUCTS[1],
+      selectedWeight: MEAT_PRODUCTS[1].weightOptions[0], // 1 kg Biryani pack default
+      quantity: 1,
+    },
   ]);
-  const [wishlist, setWishlist] = useState(['ALF-LOT-101']);
-  const [basketOpen, setBasketOpen] = useState(false);
-  const [selectedLot, setSelectedLot] = useState(null);
+
+  const [wishlist, setWishlist] = useState(['ALF-MEAT-01', 'ALF-MEAT-04']);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [inquiryModalOpen, setInquiryModalOpen] = useState(false);
 
-  // Filter lots based on category and search query
-  const filteredLots = useMemo(() => {
-    return LIVESTOCK_LOTS.filter((lot) => {
+  // Filter products by category and search query
+  const filteredProducts = useMemo(() => {
+    return MEAT_PRODUCTS.filter((product) => {
       const matchesCategory =
-        activeCategory === 'all' || lot.category === activeCategory;
+        activeCategory === 'all' || product.category === activeCategory;
 
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !q ||
-        lot.title.toLowerCase().includes(q) ||
-        lot.breed.toLowerCase().includes(q) ||
-        lot.id.toLowerCase().includes(q) ||
-        lot.origin.toLowerCase().includes(q) ||
-        lot.spec.toLowerCase().includes(q);
+        product.name.toLowerCase().includes(q) ||
+        product.tagline.toLowerCase().includes(q) ||
+        product.cookingStyle.toLowerCase().includes(q) ||
+        product.description.toLowerCase().includes(q);
 
       return matchesCategory && matchesSearch;
     });
   }, [activeCategory, searchQuery]);
 
   // Basket handlers
-  const handleAddToBasket = (lot) => {
+  const handleAddToBasket = (product, weightOption) => {
+    const chosenWeight = weightOption || product.weightOptions[0];
+
     setBasket((prev) => {
-      const exists = prev.find((item) => item.id === lot.id);
-      if (exists) {
-        return prev.map((item) =>
-          item.id === lot.id
-            ? { ...item, heads: (item.heads || 50) + 10 }
-            : item
+      const existingIndex = prev.findIndex(
+        (item) => item.id === product.id && item.selectedWeight.label === chosenWeight.label
+      );
+
+      if (existingIndex > -1) {
+        return prev.map((item, idx) =>
+          idx === existingIndex ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-      return [...prev, { ...lot, heads: 50 }];
+
+      return [...prev, { ...product, selectedWeight: chosenWeight, quantity: 1 }];
     });
-    setBasketOpen(true);
+
+    setCartOpen(true);
   };
 
-  const handleUpdateQuantity = (id, heads) => {
+  const handleUpdateQuantity = (id, weightLabel, newQty) => {
     setBasket((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, heads } : item))
+      prev.map((item) =>
+        item.id === id && item.selectedWeight.label === weightLabel
+          ? { ...item, quantity: newQty }
+          : item
+      )
     );
   };
 
-  const handleRemoveItem = (id) => {
-    setBasket((prev) => prev.filter((item) => item.id !== id));
+  const handleRemoveItem = (id, weightLabel) => {
+    setBasket((prev) =>
+      prev.filter(
+        (item) => !(item.id === id && item.selectedWeight.label === weightLabel)
+      )
+    );
   };
 
   const handleClearBasket = () => {
@@ -86,91 +108,82 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#03140E] text-[#F9F8F4] overflow-x-hidden selection:bg-[#E5A93C] selection:text-[#03140E]">
-      {/* DLiciousMEAT Style Top Header */}
+      {/* DLiciousMEAT Style Top Header with Live Search & Basket */}
       <DliciousHeader
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         basketCount={basket.length}
-        onOpenBasket={() => setBasketOpen(true)}
+        onOpenBasket={() => setCartOpen(true)}
         wishlistCount={wishlist.length}
         onOpenWishlist={() => setActiveCategory('all')}
         onOpenInquiry={() => setInquiryModalOpen(true)}
       />
 
       <main className="pb-16 md:pb-0">
-        {/* DLiciousMEAT Category Filter Pills */}
-        <div className="pt-20 sm:pt-24">
-          <DliciousCategoryPills
-            activeCategory={activeCategory}
-            onSelectCategory={setActiveCategory}
-          />
-        </div>
-
-        {/* DLiciousMEAT Promo Hero Billboard */}
-        <DliciousHeroBanner onOpenInquiry={() => setInquiryModalOpen(true)} />
+        {/* Fresh Meat Culinary Hero Billboard */}
+        <MeatHeroBillboard onOpenInquiry={() => setInquiryModalOpen(true)} />
 
         {/* Continuous Trust Marquee */}
         <TrustTicker />
 
-        {/* Live Interactive Livestock Batch Catalog (DLiciousMEAT Shop Grid) */}
-        <LivestockCatalogGrid
-          lots={filteredLots}
+        {/* Fresh Meat Cuts Catalog Grid with Category Tabs */}
+        <MeatCatalogGrid
+          products={filteredProducts}
+          activeCategory={activeCategory}
+          onSelectCategory={setActiveCategory}
           basket={basket}
           onAddToBasket={handleAddToBasket}
           wishlist={wishlist}
           onToggleWishlist={handleToggleWishlist}
-          onSelectLot={setSelectedLot}
+          onOpenDetails={setSelectedProduct}
         />
 
-        {/* Industrial Volume Planner (DLiciousMEAT "Party & Bulk Orders" equivalent) */}
-        <BulkOrderEstimator />
+        {/* Party & Bulk Orders Meat Calculator (DLiciousMEAT bulk feature) */}
+        <PartyBulkMeatCalculator />
 
-        {/* Live Livestock Shipment GPS Tracker (DLiciousMEAT "Track Order" equivalent) */}
-        <ConsignmentTracker />
+        {/* Storage & Freshness Handling Guide (DLiciousMEAT storage guide) */}
+        <StorageGuideSection />
 
-        {/* Strategic Allana Pvt. Ltd. Partnership & Ghazipur Hub */}
-        <AllanaPartnership onOpenInquiry={() => setInquiryModalOpen(true)} />
+        {/* Allana Pvt. Ltd. Institutional Carabeef Export Supply */}
+        <AllanaMeatExportSection onOpenInquiry={() => setInquiryModalOpen(true)} />
 
-        {/* DLiciousMEAT Ecosystem Synergy Section */}
+        {/* DLiciousMEAT Group Synergy Section */}
         <DliciousSynergy />
 
-        {/* Biosecurity & Ante-Mortem Protocols */}
-        <BiosecuritySection />
-
-        {/* Verified Hubs (Ghazipur MCD + Quresh Nagar) & Contact Desk */}
+        {/* Dual Locations (Ghazipur MCD + Quresh Nagar) & Contact Desk */}
         <DualLocationsSection />
       </main>
 
       {/* Corporate Certified Footer */}
       <Footer />
 
-      {/* Allocation Basket Slide-Over Drawer */}
-      <AllocationBasketDrawer
-        isOpen={basketOpen}
-        onClose={() => setBasketOpen(false)}
+      {/* Slide-over Fresh Meat Basket Drawer */}
+      <MeatCartDrawer
+        isOpen={cartOpen}
+        onClose={() => setCartOpen(false)}
         basket={basket}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onClearBasket={handleClearBasket}
       />
 
-      {/* Lot Detail Dossier Modal */}
-      <LotDetailModal
-        lot={selectedLot}
-        onClose={() => setSelectedLot(null)}
+      {/* Meat Cut Detail Dossier Modal */}
+      <MeatDetailModal
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
         onAddToBasket={handleAddToBasket}
       />
 
-      {/* Quick B2B Allocation Request Modal */}
+      {/* Quick B2B Requisition Modal */}
       <ProcurementModal
         isOpen={inquiryModalOpen}
         onClose={() => setInquiryModalOpen(false)}
       />
 
-      {/* DLiciousMEAT Mobile Bottom Bar */}
+      {/* DLiciousMEAT Mobile Bottom App Bar */}
       <DliciousMobileBottomBar
         basketCount={basket.length}
-        onOpenBasket={() => setBasketOpen(true)}
+        onOpenBasket={() => setCartOpen(true)}
       />
     </div>
   );
