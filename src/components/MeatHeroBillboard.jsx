@@ -4,7 +4,16 @@ import { ShieldCheck, Award, ArrowRight, Snowflake, CheckCircle2, Utensils, Scal
 export default function MeatHeroBillboard({ onOpenInquiry }) {
   return (
     <section className="relative pt-28 sm:pt-36 pb-12 bg-gradient-to-b from-[#03140E] via-[#062319] to-[#041A12] border-b border-[#144936]">
-      <div className="max-w-7xl mx-auto px-3 sm:px-8">
+      {/* Subtle atmospheric meat showcase in background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-10 mix-blend-luminosity scale-105"
+          style={{ backgroundImage: `url('/images/meat/hero-meat-showcase.jpg')` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#03140E] via-[#03140E]/95 to-[#03140E]/80" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-3 sm:px-8 relative z-10">
         
         {/* Main Billboard Card (DLiciousMEAT app hero style) */}
         <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#093525] via-[#062319] to-[#020B07] border-2 border-[#E5A93C]/40 shadow-[0_20px_60px_rgba(0,0,0,0.8)] p-5 sm:p-12">
@@ -72,26 +81,26 @@ export default function MeatHeroBillboard({ onOpenInquiry }) {
                   className="px-5 py-3.5 rounded-xl bg-[#03140E] hover:bg-[#0A3124] border border-[#E5A93C]/40 text-[#cadbd3] hover:text-[#E5A93C] font-semibold text-xs transition-colors flex items-center gap-2"
                 >
                   <Scale className="w-4 h-4 text-[#E5A93C]" />
-                  <span>Party & Bulk Order Calculator</span>
+                  <span>Party & Bulk Meat Calculator</span>
                 </a>
               </div>
 
             </div>
 
-            {/* Right Culinary Meat Display Card (DLiciousMEAT featured item style) */}
+            {/* Right Culinary Meat Display Card (Using real Prime Boneless Boti photo from bedf!) */}
             <div className="lg:col-span-5 relative">
               <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-[#E5A93C]/40 bg-[#03140E] shadow-2xl group">
                 <div className="relative h-64 sm:h-80 w-full overflow-hidden">
                   <img
-                    src="https://images.unsplash.com/photo-1603048588665-791ca8aea617?auto=format&fit=crop&w=800&q=80"
-                    alt="Fresh Raw Halal Buffalo Meat Cuts"
+                    src="/images/meat/boneless-cubes.jpg"
+                    alt="Prime Boneless Buffalo Meat Cubes (Boti / Curry Cut)"
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#03140E] via-[#03140E]/20 to-transparent" />
 
                   <div className="absolute top-3 left-3 right-3 flex justify-between items-center z-10">
                     <span className="px-3 py-1 rounded-full bg-[#E5A93C] text-[#03140E] text-[10px] font-bold uppercase shadow">
-                      Daily Fresh Slicing
+                      DAILY FRESH SLICING
                     </span>
                     <span className="px-2.5 py-1 rounded-full bg-[#03140E]/85 backdrop-blur-md border border-[#E5A93C]/30 text-white text-[10px] font-mono">
                       APEDA Ghazipur Base
@@ -101,13 +110,13 @@ export default function MeatHeroBillboard({ onOpenInquiry }) {
                   <div className="absolute bottom-3 left-3 right-3 z-10 flex justify-between items-end">
                     <div>
                       <div className="text-[10px] uppercase tracking-wider text-[#E5A93C] font-semibold">
-                        Signature Cut
+                        SIGNATURE CUT
                       </div>
-                      <div className="font-serif text-xl text-white font-bold">
+                      <div className="font-serif text-xl sm:text-2xl text-white font-bold drop-shadow-md">
                         Prime Boneless Boti
                       </div>
                     </div>
-                    <span className="px-3 py-1.5 rounded-xl bg-[#E5A93C] text-[#03140E] text-xs font-extrabold uppercase shadow">
+                    <span className="px-3.5 py-1.5 rounded-xl bg-[#E5A93C] text-[#03140E] text-xs font-extrabold uppercase shadow">
                       ₹380 / KG
                     </span>
                   </div>
