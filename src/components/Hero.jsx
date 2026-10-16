@@ -3,7 +3,7 @@ import { ShieldCheck, Award, ArrowRight, CheckCircle2, Factory, Scale, ChevronDo
 
 export default function Hero({ onOpenInquiry }) {
   return (
-    <section id="hero" className="relative min-h-[90vh] pt-28 sm:pt-36 pb-12 sm:pb-20 overflow-hidden flex items-center bg-[#03140E]">
+    <section id="hero" className="relative min-h-[90vh] pt-24 sm:pt-36 pb-12 sm:pb-20 overflow-hidden flex items-center bg-[#03140E]">
       {/* Background Ambience & Atmospheric Imagery */}
       <div className="absolute inset-0 pointer-events-none">
         <div 
@@ -23,7 +23,7 @@ export default function Hero({ onOpenInquiry }) {
           <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             
             {/* Top Credential Capsule */}
-            <div className="inline-flex flex-wrap items-center gap-1.5 sm:gap-2 p-1 pr-3 rounded-full bg-[#0A3124]/90 border border-[#E5A93C]/40 backdrop-blur-md shadow-lg text-[10px] sm:text-xs">
+            <div className="inline-flex flex-wrap items-center gap-1.5 sm:gap-2 p-1 pr-3 rounded-full bg-[#0A3124]/90 border border-[#E5A93C]/40 backdrop-blur-md shadow-lg text-[10px] sm:text-xs mt-1 sm:mt-0">
               <span className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#E5A93C] text-[#03140E]">
                 <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 font-bold" />
               </span>
